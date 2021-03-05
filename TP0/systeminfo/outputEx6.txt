@@ -1,0 +1,1 @@
+Memoire kB=670064; Memoire MB=654.359375; Endianite=LE; Repertoire de base=C:\Users\Didi
