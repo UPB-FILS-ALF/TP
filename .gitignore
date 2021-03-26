@@ -105,3 +105,6 @@ dist
 
 # JavaScript files
 *.js
+
+# Java files from ANTLR
+*.java
