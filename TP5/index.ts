@@ -17,20 +17,30 @@ let tree = parser.start();
 
 abstract class ASTNode {
     constructor(){};
-    public toJSON(): any {
-        return {
-            ...this, id: this.constructor.name
-        };
-    }
 }
 class StatementNode extends ASTNode {
     constructor(public readonly statement: ASTNode) {
         super();
     }
+    toJSON() {
+        return {
+            id: "statements",
+            statements: this.statement
+        }
+    }
 }
 class DeclarationNode extends ASTNode {
     constructor(public readonly variable_type: string, public readonly variable: string, public readonly op: string, public readonly value: string|number) {
         super();
+    }
+    toJSON() {
+        return {
+            id: "declaration",
+            variable_type: this.variable_type,
+            variable: this.variable,
+            value: this.value
+
+        }
     }
 }
 
@@ -38,10 +48,22 @@ class ValueNode extends ASTNode {
     constructor(public readonly value: number|string) {
         super();
     }
+    toJSON() {
+        return {
+            id: "value",
+            value: this.value
+        }
+
+    }
 }
 class TypeNode extends ASTNode {
     constructor(public readonly type_name: string) {
         super();
+    }
+    toJSON() {
+        return  {
+            type: this.type_name
+        }
     }
 }
 
@@ -89,4 +111,4 @@ class MyAlfVisitor extends AbstractParseTreeVisitor<ASTNode> implements AlfVisit
     }
 }
 const visitor = new MyAlfVisitor();
-console.log(JSON.stringify(visitor.visit(tree).toJSON(), null, 4));
+console.log(JSON.stringify(visitor.visit(tree), null, 4));
