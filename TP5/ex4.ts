@@ -1,24 +1,23 @@
 import { CharStreams, CodePointCharStream, CommonTokenStream, Token } from 'antlr4ts';
-import { AlfLexer } from './AlfLexer.js';
-import { AlfParser, DeclarationRuleContext, ExpressionAdditionContext, ExpressionDivisionContext, ExpressionMultiplyContext, ExpressionParanthesisContext, ExpressionRemContext, ExpressionSubtractionContext, MultilineProgContext, NumberContext, SinglelineProgContext, TypeFloatContext, TypeIntContext, TypeStringContext, ValueFloatContext, ValueIntContext, ValueStringContext, VariableDeclarationContext } from './AlfParser.js';
-import { AlfListener } from './AlfListener.js';
-import { AlfVisitor } from './AlfVisitor.js';
+import { Ex4Lexer } from './Ex4Lexer.js';
+import { Ex4Parser, DeclarationRuleContext, ExpressionAdditionContext, ExpressionDivisionContext, ExpressionMultiplyContext, ExpressionParanthesisContext, ExpressionRemContext, ExpressionSubtractionContext, MultilineProgContext, SinglelineProgContext, TypeFloatContext, TypeIntContext, TypeStringContext, ValueFloatContext, ValueIntContext, ValueStringContext, VariableDeclarationContext, ExpressionValueContext } from './Ex4Parser.js';
+import { Ex4Listener } from './Ex4Listener.js';
+import { Ex4Visitor } from './Ex4Visitor.js';
 import * as fs from 'fs';
 import { ParseTree } from 'antlr4ts/tree/ParseTree';
 import { AbstractParseTreeVisitor } from 'antlr4ts/tree/AbstractParseTreeVisitor';
 
 let input: string = fs.readFileSync('./sample.txt').toString();
 let inputStream: CodePointCharStream = CharStreams.fromString(input);
-let lexer: AlfLexer = new AlfLexer(inputStream);
+let lexer: Ex4Lexer = new Ex4Lexer(inputStream);
 let tokenStream: CommonTokenStream = new CommonTokenStream(lexer);
-let parser: AlfParser = new AlfParser(tokenStream);
+let parser: Ex4Parser = new Ex4Parser(tokenStream);
 
-// Parse the input, where `prog` is whatever entry point you defined
 let tree = parser.start();
-// console.log(tree);
 
 abstract class ASTNode {
     constructor(){};
+    
 }
 
 class StatementsNode extends ASTNode {
@@ -33,7 +32,7 @@ class StatementsNode extends ASTNode {
     }
 }
 class DeclarationNode extends ASTNode {
-    constructor(public readonly variable_type: string, public readonly variable: string, public readonly op: string, public readonly value: string|number) {
+    constructor(public readonly variable_type: string, public readonly variable: string, public readonly op: string, public readonly value: Expression|ValueNode) {
         super();
     }
     toJSON() {
@@ -68,6 +67,7 @@ class TypeNode extends ASTNode {
             type: this.type_name
         }
     }
+    
 }
 class Expression extends ASTNode {
     constructor(public readonly op: string, public readonly left: Expression, public readonly right: Expression) {
@@ -81,7 +81,7 @@ class Expression extends ASTNode {
         }
     }
 }
-class MyAlfVisitor extends AbstractParseTreeVisitor<ASTNode> implements AlfVisitor<ASTNode> {
+class MyEx4Visitor extends AbstractParseTreeVisitor<ASTNode> implements Ex4Visitor<ASTNode> {
     defaultResult() {
         return new StatementsNode([]);
     }
@@ -96,7 +96,6 @@ class MyAlfVisitor extends AbstractParseTreeVisitor<ASTNode> implements AlfVisit
         }
     }
     visitSinglelineProg(ctx: SinglelineProgContext):ASTNode {
-        console.log('single')
         return new StatementsNode([this.visit(ctx.statement())]);
     }
     visitVariableDeclaration(ctx: VariableDeclarationContext): DeclarationNode {
@@ -104,7 +103,7 @@ class MyAlfVisitor extends AbstractParseTreeVisitor<ASTNode> implements AlfVisit
             (this.visit(ctx.type()) as TypeNode).type_name,
             ctx.VARIABLE().text,
             ctx.EQ().text,
-            (this.visit(ctx.value()) as ValueNode).value
+            this.visit(ctx.expression()) as Expression
         );
     }
     visitValueInt(ctx: ValueIntContext): ValueNode {
@@ -185,12 +184,14 @@ class MyAlfVisitor extends AbstractParseTreeVisitor<ASTNode> implements AlfVisit
     visitExpressionParanthesis(ctx: ExpressionParanthesisContext) {
         return this.visit(ctx.expression());
     }
-    visitNumber(ctx: NumberContext): ValueNode {
-        let value = ctx.INT_NUMBER();
+    visitExpressionValue(ctx: ExpressionValueContext): ValueNode {
+        let value = this.visit(ctx.value());
         if(value !== undefined) {
-		    return new ValueNode(parseInt(value.text));
+		    return new ValueNode((this.visit(ctx.value()) as ValueNode).value);
         } else throw new Error();
 	}
 }
-const visitor = new MyAlfVisitor();
+const visitor = new MyEx4Visitor();
 console.log(JSON.stringify(visitor.visit(tree), null, 4));
+
+
