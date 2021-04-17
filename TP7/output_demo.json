@@ -1,0 +1,78 @@
+{
+    "ast": {
+        "statements": [
+            {
+                "variable_type": "int",
+                "variable": "_var1",
+                "op": "=",
+                "value": {
+                    "value": "_var5",
+                    "line": 1,
+                    "type": "variable",
+                    "id": "ValueNode"
+                },
+                "line": 1,
+                "id": "DeclarationNode"
+            },
+            {
+                "variable_type": "string",
+                "variable": "_var2",
+                "op": "=",
+                "value": {
+                    "value": "\"alf\"",
+                    "line": 2,
+                    "type": "string",
+                    "id": "ValueNode"
+                },
+                "line": 2,
+                "id": "DeclarationNode"
+            },
+            {
+                "variable_type": "float",
+                "variable": "_var3",
+                "op": "=",
+                "value": {
+                    "op": "+",
+                    "left": {
+                        "value": 2.5,
+                        "line": 3,
+                        "type": "float",
+                        "id": "ValueNode"
+                    },
+                    "right": {
+                        "value": 7,
+                        "line": 3,
+                        "type": "int",
+                        "id": "ValueNode"
+                    },
+                    "line": 3,
+                    "type": "",
+                    "id": "Expression"
+                },
+                "line": 3,
+                "id": "DeclarationNode"
+            },
+            {
+                "op": "-",
+                "left": {
+                    "value": 2,
+                    "line": 4,
+                    "type": "int",
+                    "id": "ValueNode"
+                },
+                "right": {
+                    "value": "_var3",
+                    "line": 4,
+                    "type": "variable",
+                    "id": "ValueNode"
+                },
+                "line": 4,
+                "type": "",
+                "id": "Expression"
+            }
+        ],
+        "line": 1,
+        "id": "StatementsNode"
+    },
+    "symbol_table": {}
+}
