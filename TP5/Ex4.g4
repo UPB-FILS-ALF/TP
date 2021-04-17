@@ -1,25 +1,25 @@
-grammar Alf;
+grammar Ex4;
 
-start       : (statement SEMICOLON NEWLINE*)*     #multilineProg
-            | statement SEMICOLON                 #singlelineProg 
-            ;
-// start       : statement ';'  #statementRule;
-statement   : declaration       #declarationRule
-            | expression        #expressionRule
+start       : (statement SEMICOLON NEWLINE*)*   #multilineProg
+            | statement SEMICOLON               #singlelineProg 
             ;
 
-declaration : type VARIABLE EQ value       #variableDeclaration
+statement   : declaration                       #declarationRule
+            | expression                        #expressionRule
             ;
 
-type        : INT                           #typeInt
-            | FLOAT                         #typeFloat
-            | STRING                        #typeString
+declaration : type VARIABLE EQ expression       #variableDeclaration
             ;
 
-value       : INT_NUMBER                    #valueInt
-            | FLOAT_NUMBER                  #valueFloat
-            | STRING_TEXT                   #valueString
-            | VARIABLE                      #valuaVariable
+type        : INT                               #typeInt
+            | FLOAT                             #typeFloat
+            | STRING                            #typeString
+            ;
+
+value       : INT_NUMBER                        #valueInt
+            | FLOAT_NUMBER                      #valueFloat
+            | STRING_TEXT                       #valueString
+            | VARIABLE                          #valueVariable
             ;
 
 expression  : left=expression op=MUL right=expression     #expressionMultiply
@@ -28,8 +28,7 @@ expression  : left=expression op=MUL right=expression     #expressionMultiply
             | left=expression op=ADD right=expression     #expressionAddition
             | left=expression op=SUB right=expression     #expressionSubtraction
             | LP expression RP                            #expressionParanthesis
-            | number=(INT_NUMBER|FLOAT_NUMBER)            #number
-            | var=VARIABLE                                #variable
+            | value                                       #expressionValue
             ;
 
 WS          :   (' ')       -> skip;
